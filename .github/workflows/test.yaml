@@ -21,6 +21,10 @@ jobs:
       - name: Install test dependencies
         run: |
           /bin/bash -x run.sh install
+      - name: Configure git user
+        run: |
+          git config --global user.email "test@test.com"
+          git config --global user.name "Eric Riddoch"
       - name: Lint, Format, and other static code quality checks
         run: |
           /bin/bash -x run.sh test

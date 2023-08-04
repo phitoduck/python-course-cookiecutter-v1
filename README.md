@@ -12,3 +12,11 @@
 1. the `.github/workflows.publish.yml` has issues with jinja because of the `${{ secrets... }}` syntax. It needs to be escaped with `{% raw %}` and `{% endraw %}`.
   - adding the `--verbose` flag to `cookiecutter` prints out each file so you can tell exactly the file it fails on
 1. `.vscode/settings.json` seems to not be very filled out, we should find that from previous videos
+
+Had to add this in order to pass the build for this repo
+```yaml
+- name: Configure git user
+  run: |
+    git config --global user.email "test@test.com"
+    git config --global user.name "Eric Riddoch"
+```
