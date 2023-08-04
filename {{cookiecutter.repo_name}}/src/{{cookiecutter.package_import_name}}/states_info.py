@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from typing import List
+from time import sleep
 
 THIS_DIR = Path(__file__).parent
 CITIES_JSON_FPATH = THIS_DIR / "./my_folder/cities.json"
@@ -15,6 +16,9 @@ def is_city_capitol_of_state(city_name: str, state: str) -> bool:
     matched_city = matching_cities[0]
     return matched_city["state"] == state
 
+def slow_add(a: int, b: int) -> int:
+    sleep(4)
+    return a + b
 
 if __name__ == "__main__":
     is_capitol = is_city_capitol_of_state(city_name="Provo", state="Alabama")

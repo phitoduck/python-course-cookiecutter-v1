@@ -1,0 +1,4 @@
+{
+    "repo_name": "Name of the repository.",
+    "package_import_name": "Used for import statements to the generated package, e.g. 'my_pkg'."
+}

@@ -103,12 +103,12 @@ jobs:
         run: |
           /bin/bash -x run.sh publish:test
         env:
-          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+          TEST_PYPI_TOKEN: ${% raw %}{{{% endraw %} secrets.TEST_PYPI_TOKEN }}
       - name: Publish to Prod PyPI
         run: |
           /bin/bash -x run.sh publish:prod
         env:
-          PROD_PYPI_TOKEN: ${{ secrets.PROD_PYPI_TOKEN }}
+          PROD_PYPI_TOKEN: ${% raw %}{{{% endraw %} secrets.PROD_PYPI_TOKEN }}
       - name: Push tags
         run: |
           git push origin --tags
@@ -122,18 +122,18 @@ jobs:
     steps:
       - name: Dump GitHub context
         id: github_context_step
-        run: echo '${{ toJSON(github) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(github) }}'
       - name: Dump job context
-        run: echo '${{ toJSON(job) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(job) }}'
       - name: Dump steps context
-        run: echo '${{ toJSON(steps) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(steps) }}'
       - name: Dump runner context
-        run: echo '${{ toJSON(runner) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(runner) }}'
       - name: Dump strategy context
-        run: echo '${{ toJSON(strategy) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(strategy) }}'
       - name: Dump matrix context
-        run: echo '${{ toJSON(matrix) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(matrix) }}'
       - name: Dump secrets
-        run: echo '${{ toJSON(secrets) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(secrets) }}'
       - name: Dump vars
-        run: echo '${{ toJSON(vars) }}'
+        run: echo '${% raw %}{{{% endraw %} toJSON(vars) }}'

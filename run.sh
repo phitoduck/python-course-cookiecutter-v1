@@ -6,6 +6,7 @@ THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 function install {
     python -m pip install --upgrade pip
+    python -m pip install -r requirements.test.txt
     python -m pip install cookiecutter
 }
 
@@ -19,8 +20,11 @@ default_context:
     repo_name: $SAMPLE_REPO_NAME
 EOF
 
-    cookiecutter ./ \
-        --output-dir "$SAMPLE_REPO_DIR"
+    cookiecutter "$THIS_DIR" \
+        --output-dir "$SAMPLE_REPO_DIR" \
+        --no-input \
+        --config-file "${THIS_DIR}/cookiecutter.yaml" \
+        --overwrite-if-exists
 
 }
 
