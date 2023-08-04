@@ -3,3 +3,4 @@ tests/artifacts
 *cache*
 !tests/utils/virtualenv.py
 !tests/fixtures/virtualenv.py
+*.coverage

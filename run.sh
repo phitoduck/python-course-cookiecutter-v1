@@ -5,9 +5,27 @@ set -e
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 function install {
+    set -x
     python -m pip install --upgrade pip
     python -m pip install -r requirements.test.txt
     python -m pip install cookiecutter
+}
+
+# (example) ./run.sh test tests/test_slow.py::test__slow_add
+function test {
+    # run only specified tests, if none specified, run all
+    PYTEST_EXIT_STATUS=0
+    python -m pytest -m 'not slow' "$THIS_DIR/tests/" \
+        --cov "$THIS_DIR/packaging_demo" \
+        --cov-report html \
+        --cov-report term \
+        --cov-report xml \
+        --junit-xml "$THIS_DIR/test-reports/report.xml" \
+        --cov-fail-under 60 || ((PYTEST_EXIT_STATUS+=$?))
+    mv coverage.xml "$THIS_DIR/test-reports/"
+    mv htmlcov "$THIS_DIR/test-reports/"
+    mv .coverage "$THIS_DIR/test-reports/"
+    return $PYTEST_EXIT_STATUS
 }
 
 function generate-sample-project {
@@ -29,7 +47,7 @@ EOF
 }
 
 function clean {
-    rm -rf dist build coverage.xml test-reports
+    rm -rf dist build coverage.xml test-reports cookiecutter.yaml
     find . \
       -type d \
       \( \
