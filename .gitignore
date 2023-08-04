@@ -1,2 +1,5 @@
 tests/artifacts
 *env*
+*cache*
+!tests/utils/virtualenv.py
+!tests/fixtures/virtualenv.py
