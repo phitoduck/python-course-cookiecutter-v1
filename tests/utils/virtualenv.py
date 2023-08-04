@@ -13,19 +13,19 @@ import subprocess
 @dataclass
 class Virtualenv:
     directory: Path
-    
+
     def get_activated_env_vars(self) -> Dict[str, str]:
         env: Dict[str, str] = os.environ.copy()
         env["VIRTUAL_ENV"] = str(self.directory)
         env["PATH"] = str(self.directory / "bin") + ":" + env["PATH"]
         return env
-    
+
     @classmethod
     @contextmanager
     def create(cls: Type["Virtualenv"], parent_dir: Path, cleanup_on_exit: bool = True) -> "Virtualenv":
         """
         Create a virtualenv at `{parent_dir}/venv` or `{parent_dir}/<random>/venv` if `cleanup_on_exit` is True.
-        
+
         :param parent_dir: directory where a folder called `venv` will be created (or `<random>/venv`; see `cleanup_on_exit`)
         :param cleanup_on_exit: if `True`, the virtualenv will be deleted when the context manager exits.
         """
@@ -49,5 +49,3 @@ class Virtualenv:
         finally:
             if cleanup_on_exit:
                 temp_dir.cleanup()
-
-    

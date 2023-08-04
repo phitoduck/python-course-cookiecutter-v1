@@ -1,5 +1,4 @@
 test-reports
-*venv
 .ruff_cache
 build
 dist

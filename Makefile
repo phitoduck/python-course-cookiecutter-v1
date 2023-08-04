@@ -9,3 +9,6 @@ clean:
 
 test:
 	bash run.sh test
+
+help:
+	bash run.sh help

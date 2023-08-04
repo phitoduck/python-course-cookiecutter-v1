@@ -37,8 +37,8 @@ function test:quick {
 function test {
     # run only specified tests, if none specified, run all
     PYTEST_EXIT_STATUS=0
-    python -m pytest -m 'not slow' "$THIS_DIR/tests/" \
-        --cov "$THIS_DIR/packaging_demo" \
+    python -m pytest "$THIS_DIR/tests/" \
+        --cov "$THIS_DIR/src" \
         --cov-report html \
         --cov-report term \
         --cov-report xml \
@@ -66,7 +66,7 @@ function test:wheel-locally {
 function test:ci {
     # run only specified tests, if none specified, run all
     PYTEST_EXIT_STATUS=0
-    INSTALLED_PKG_DIR="$(python -c 'import packaging_demo; print(packaging_demo.__path__[0])')"
+    INSTALLED_PKG_DIR="$(python -c 'import {{cookiecutter.package_import_name}}; print({{cookiecutter.package_import_name}}.__path__[0])')"
     python -m pytest "$THIS_DIR/tests/" \
         --cov "$INSTALLED_PKG_DIR" \
         --cov-report html \
@@ -80,9 +80,8 @@ function test:ci {
     return $PYTEST_EXIT_STATUS
 }
 
-
 function serve-coverage-report {
-    python -m http.server --directory "$THIS_DIR/htmlcov/"
+    python -m http.server --directory "$THIS_DIR/test-reports/htmlcov/"
 }
 
 function build {
@@ -128,7 +127,7 @@ function clean {
         -o -name "*htmlcov" \
       \) \
       -not -path "*env/*" \
-      -exec rm -r {} +
+      -exec rm -r {} + || true
 
     find . \
       -type f \

@@ -4,3 +4,4 @@ tests/artifacts
 !tests/utils/virtualenv.py
 !tests/fixtures/virtualenv.py
 *.coverage
+sample

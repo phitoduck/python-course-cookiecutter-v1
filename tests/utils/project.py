@@ -58,6 +58,7 @@ def generate_project(outdir: Path, template_values: Dict[str, str]) -> Path:
         cmd,
         cwd=outdir,
     )
+    return outdir / template_values["repo_name"]
 
 
 def make_cookiecutter_config_json_file(

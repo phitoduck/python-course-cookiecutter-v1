@@ -14,18 +14,11 @@ function install {
 # (example) ./run.sh test tests/test_slow.py::test__slow_add
 function test {
     # run only specified tests, if none specified, run all
-    PYTEST_EXIT_STATUS=0
-    python -m pytest -m 'not slow' "$THIS_DIR/tests/" \
-        --cov "$THIS_DIR/packaging_demo" \
-        --cov-report html \
-        --cov-report term \
-        --cov-report xml \
-        --junit-xml "$THIS_DIR/test-reports/report.xml" \
-        --cov-fail-under 60 || ((PYTEST_EXIT_STATUS+=$?))
-    mv coverage.xml "$THIS_DIR/test-reports/"
-    mv htmlcov "$THIS_DIR/test-reports/"
-    mv .coverage "$THIS_DIR/test-reports/"
-    return $PYTEST_EXIT_STATUS
+    python -m pytest \
+        -m 'not slow' \
+        --ignore-glob 'tests/artifacts/*' \
+        --numprocesses auto \
+        "$THIS_DIR/tests/"
 }
 
 function generate-sample-project {
@@ -43,11 +36,17 @@ EOF
         --no-input \
         --config-file "${THIS_DIR}/cookiecutter.yaml" \
         --overwrite-if-exists
-
 }
 
 function clean {
-    rm -rf dist build coverage.xml test-reports cookiecutter.yaml
+    rm -rf dist \
+        build \
+        coverage.xml \
+        test-reports \
+        tests/artifacts \
+        cookiecutter.yaml \
+        sample \
+        .coverage
     find . \
       -type d \
       \( \
@@ -57,7 +56,7 @@ function clean {
         -o -name "*htmlcov" \
       \) \
       -not -path "*env/*" \
-      -exec rm -r {} +
+      -exec rm -r {} + || true
 
     find . \
       -type f \
