@@ -133,7 +133,7 @@ jobs:
           # put the .git folder in the generated project
           mv .git.bak ${{ github.event.inputs.repo_name }}/.git
 
-          # stage the changes on a new branch
+          # stage the changes on a new branch, for linting
           BRANCH_NAME="populate-from-template-${{ github.run_number }}"
           git checkout -b $BRANCH_NAME
           git add --all
@@ -144,7 +144,8 @@ jobs:
           /bin/bash -x run.sh install
           /bin/bash -x run.sh lint || true
 
-          # commit and push the changes
+          # re-stage and commit and push the changes
+          git add --all
           git commit -m 'feat!: populated from `python-course-cookiecutter-v1` template'
           git remote set-url origin "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
           git push --set-upstream origin $BRANCH_NAME
