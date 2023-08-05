@@ -8,7 +8,7 @@ function install {
     set -x
     python -m pip install --upgrade pip
     python -m pip install -r requirements.test.txt
-    python -m pip install cookiecutter
+    python -m pip install -r requirements.dev.txt
 }
 
 # (example) ./run.sh test tests/test_slow.py::test__slow_add
