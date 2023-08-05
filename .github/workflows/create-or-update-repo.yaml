@@ -76,6 +76,7 @@ jobs:
           echo "# ${{ github.event.inputs.repo_name }}" > README.md
           git add README.md
           git commit -m "feat: initial commit"
+          git remote set-url origin "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
           git push --set-upstream origin main
 
   upsert-pypi-secrets:
