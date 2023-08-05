@@ -39,9 +39,12 @@ on:
         type: boolean
         default: true
 
-jobs:
+env:
+  # set the token used by gh cli (docs: https://cli.github.com/manual/gh_help_environment)
+  GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
-  create-repo:
+jobs:
+  create-repo-if-not-exists:
     name: Create Repo
     if: ${{ github.event.inputs.create_repo == 'true' }}
     runs-on: ubuntu-latest
@@ -50,10 +53,10 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
+      - name: Exit if repo exists
+        run: |
+          gh repo clone phitoduck/${{ github.event.inputs.repo_name }} && exit 0
       - name: Run tests
-        env:
-          # set the token used by gh cli (docs: https://cli.github.com/manual/gh_help_environment)
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           if [[ "${{ github.event.inputs.public }}" == "true" ]]; then
             PUBLIC_OR_PRIVATE="public"
@@ -69,14 +72,12 @@ jobs:
     name: Upsert PyPI Secrets
     # if+needs: always run if upsert_pypi_secrets is true, but if
     # create-repo is run, run after create-repo
-    if: always() && ${{ github.event.inputs.upsert_pypi_secrets == 'true' }}
-    needs: create-repo
+    if: ${{ github.event.inputs.upsert_pypi_secrets == 'true' }}
+    needs: create-repo-if-not-exists
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Configure git user
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           gh secret set TEST_PYPI_TOKEN \
             --body "${{ secrets.TEST_PYPI_TOKEN }}" \
@@ -87,9 +88,9 @@ jobs:
 
   open-pr-to-populate-from-template:
     name: Open PR - Populate from template
-    if: always() && ${{ github.event.inputs.populate_from_template == 'true' }}
+    if: ${{ github.event.inputs.populate_from_template == 'true' }}
     needs:
-      - create-repo
+      - create-repo-if-not-exists
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -103,9 +104,7 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Run tests
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}  
+      - name: Run tests 
         run: |
           # clone the created repo
           gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
