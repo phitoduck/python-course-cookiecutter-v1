@@ -1,1 +1,1 @@
-VERSION = "0.0.0"
+"""{{cookiecutter.package_import_name}}."""

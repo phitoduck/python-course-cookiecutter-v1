@@ -6,3 +6,4 @@ tests/artifacts
 *.coverage
 sample
 cookiecutter.yaml
+sample-repo

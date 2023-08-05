@@ -1,0 +1,11 @@
+black
+mypy
+isort
+flake8
+flake8-docstrings
+Flake8-pyproject
+radon
+ruff
+autoflake
+pre-commit
+cookiecutter
