@@ -132,8 +132,10 @@ jobs:
           git checkout -b $BRANCH_NAME
           git add --all
           git commit -m 'feat!: populated from `python-course-cookiecutter-v1` template'
-          # git push --set-upstream origin $BRANCH_NAME
-          gh repo sync --branch $BRANCH_NAME
+          git remote set-url github "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
+          git push --set-upstream github $BRANCH_NAME
+
+          # gh repo sync --branch $BRANCH_NAME
 
           # open a PR
           gh pr create \
