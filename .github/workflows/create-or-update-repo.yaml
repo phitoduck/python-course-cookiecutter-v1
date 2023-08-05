@@ -133,8 +133,12 @@ jobs:
           # put the .git folder in the generated project
           mv .git.bak ${{ github.event.inputs.repo_name }}/.git
 
-          # commit the changes
+          # apply autoformatters (so linting is satisfied in the generated project)
           cd ${{ github.event.inputs.repo_name }}
+          /bin/bash -x run.sh install
+          /bin/bash -x run.sh lint || true
+
+          # commit the changes
           # branch name should have the build number
           BRANCH_NAME="populate-from-template-${{ github.run_number }}"
           git checkout -b $BRANCH_NAME
