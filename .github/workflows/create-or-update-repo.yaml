@@ -71,6 +71,13 @@ jobs:
             "phitoduck/${{ github.event.inputs.repo_name }}" \
             "--$PUBLIC_OR_PRIVATE"
 
+          gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
+          cd ${{ github.event.inputs.repo_name }}
+          echo "# ${{ github.event.inputs.repo_name }}" > README.md
+          git add README.md
+          git commit -m "feat: initial commit"
+          git push --set-upstream origin main
+
   upsert-pypi-secrets:
     name: Upsert PyPI Secrets
     # if+needs: always run if upsert_pypi_secrets is true, but if
