@@ -132,7 +132,8 @@ jobs:
           git checkout -b $BRANCH_NAME
           git add --all
           git commit -m 'feat!: populated from `python-course-cookiecutter-v1` template'
-          git push --set-upstream origin $BRANCH_NAME
+          # git push --set-upstream origin $BRANCH_NAME
+          gh repo sync --branch $BRANCH_NAME
 
           # open a PR
           gh pr create \
@@ -141,10 +142,3 @@ jobs:
             --base main \
             --head $BRANCH_NAME \
             --repo "phitoduck/${{ github.event.inputs.repo_name }}"
-
-          
-          
-
-
-
-
