@@ -12,11 +12,6 @@ on:
         description: "repo_name: create/update: phitoduck/<repo_name>"
         required: true
         type: string
-      create_repo:
-        description: "Create repo (default: update existing repo)"
-        required: true
-        type: boolean
-        default: false
       public:
         description: "Make repo public (default: private)"
         required: false
@@ -39,22 +34,27 @@ on:
         type: boolean
         default: true
 
-jobs:
+env:
+  # set the token used by gh cli (docs: https://cli.github.com/manual/gh_help_environment)
+  GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
-  create-repo:
+jobs:
+  create-repo-if-not-exists:
     name: Create Repo
-    if: ${{ github.event.inputs.create_repo == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Configure git user
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Run tests
-        env:
-          # set the token used by gh cli (docs: https://cli.github.com/manual/gh_help_environment)
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      - name: Create repo if not exists
         run: |
+          gh repo clone phitoduck/${{ github.event.inputs.repo_name }} || true
+          if [[ -d ${{ github.event.inputs.repo_name }} ]]; then
+            echo "Repo already exists. Exiting."
+            exit 0
+          fi
+
           if [[ "${{ github.event.inputs.public }}" == "true" ]]; then
             PUBLIC_OR_PRIVATE="public"
           else
@@ -65,30 +65,36 @@ jobs:
             "phitoduck/${{ github.event.inputs.repo_name }}" \
             "--$PUBLIC_OR_PRIVATE"
 
+          gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
+          cd ${{ github.event.inputs.repo_name }}
+          echo "# ${{ github.event.inputs.repo_name }}" > README.md
+          git add README.md
+          git commit -m "feat: initial commit"
+          git remote set-url origin "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
+          git push --set-upstream origin main
+
   upsert-pypi-secrets:
     name: Upsert PyPI Secrets
     # if+needs: always run if upsert_pypi_secrets is true, but if
     # create-repo is run, run after create-repo
-    if: always() && ${{ github.event.inputs.upsert_pypi_secrets == 'true' }}
-    needs: create-repo
+    if: ${{ github.event.inputs.upsert_pypi_secrets == 'true' }}
+    needs: create-repo-if-not-exists
     runs-on: ubuntu-latest
     steps:
       - name: Configure git user
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           gh secret set TEST_PYPI_TOKEN \
             --body "${{ secrets.TEST_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
           gh secret set PROD_PYPI_TOKEN \
             --body "${{ secrets.PROD_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
 
   open-pr-to-populate-from-template:
     name: Open PR - Populate from template
-    if: always() && ${{ github.event.inputs.populate_from_template == 'true' }}
+    if: ${{ github.event.inputs.populate_from_template == 'true' }}
     needs:
-      - create-repo
+      - create-repo-if-not-exists
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -102,15 +108,15 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Run tests
-        env:
-          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}  
+      - name: Open PR with a template
         run: |
+          set -x
+
           # clone the created repo
           gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
 
           # delete the contents inside except for the .git folder
-          mv ${{ github.event.inputs.repo_name }}/.git .
+          mv ${{ github.event.inputs.repo_name }}/.git ./.git.bak
           rm -rf ${{ github.event.inputs.repo_name }}
 
           # generate the project
@@ -119,15 +125,23 @@ jobs:
             /bin/bash -x run.sh generate-project
 
           # put the .git folder in the generated project
-          mv .git ${{ github.event.inputs.repo_name }}
+          mv .git.bak ${{ github.event.inputs.repo_name }}/.git
 
-          # commit the changes
+          # stage the changes on a new branch, for linting
           cd ${{ github.event.inputs.repo_name }}
-          # branch name should have the build number
           BRANCH_NAME="populate-from-template-${{ github.run_number }}"
           git checkout -b $BRANCH_NAME
           git add --all
+
+          # apply autoformatters (so linting is satisfied in the generated project)
+          # pre-commit requires that the .pre-commit-config file be committed
+          /bin/bash -x run.sh install
+          /bin/bash -x run.sh lint || true
+
+          # re-stage and commit and push the changes
+          git add --all
           git commit -m 'feat!: populated from `python-course-cookiecutter-v1` template'
+          git remote set-url origin "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
           git push --set-upstream origin $BRANCH_NAME
 
           # open a PR
@@ -137,10 +151,3 @@ jobs:
             --base main \
             --head $BRANCH_NAME \
             --repo "phitoduck/${{ github.event.inputs.repo_name }}"
-
-          
-          
-
-
-
-
