@@ -53,15 +53,14 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Exit if repo exists
+      - name: Create repo if not exists
         run: |
           gh repo clone phitoduck/${{ github.event.inputs.repo_name }} || true
           if [[ -d ${{ github.event.inputs.repo_name }} ]]; then
             echo "Repo already exists. Exiting."
             exit 0
           fi
-      - name: Run tests
-        run: |
+
           if [[ "${{ github.event.inputs.public }}" == "true" ]]; then
             PUBLIC_OR_PRIVATE="public"
           else
