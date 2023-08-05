@@ -55,7 +55,7 @@ jobs:
           git config --global user.name "Eric Riddoch"
       - name: Exit if repo exists
         run: |
-          (gh repo clone phitoduck/${{ github.event.inputs.repo_name }} && exit 0) || echo "Does not exist."
+          gh repo clone phitoduck/${{ github.event.inputs.repo_name }} && exit 0 || echo "Does not exist."
       - name: Run tests
         run: |
           if [[ "${{ github.event.inputs.public }}" == "true" ]]; then
