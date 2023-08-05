@@ -134,13 +134,13 @@ jobs:
           mv .git.bak ${{ github.event.inputs.repo_name }}/.git
 
           # stage the changes on a new branch, for linting
+          cd ${{ github.event.inputs.repo_name }}
           BRANCH_NAME="populate-from-template-${{ github.run_number }}"
           git checkout -b $BRANCH_NAME
           git add --all
 
           # apply autoformatters (so linting is satisfied in the generated project)
           # pre-commit requires that the .pre-commit-config file be committed
-          cd ${{ github.event.inputs.repo_name }}
           /bin/bash -x run.sh install
           /bin/bash -x run.sh lint || true
 
@@ -149,8 +149,6 @@ jobs:
           git commit -m 'feat!: populated from `python-course-cookiecutter-v1` template'
           git remote set-url origin "https://phitoduck:${GH_TOKEN}@github.com/phitoduck/${{ github.event.inputs.repo_name }}"
           git push --set-upstream origin $BRANCH_NAME
-
-          # gh repo sync --branch $BRANCH_NAME
 
           # open a PR
           gh pr create \
