@@ -25,7 +25,6 @@ function run-upsert-workflow {
 
     REPO_NAME="${REPO_NAME:-test}"
     PACKAGE_IMPORT_NAME="${PACKAGE_IMPORT_NAME:-test_pkg}"
-    CREATE_REPO="${CREATE_REPO:-false}"
     PUBLIC="${PUBLIC:-false}"
     UPSERT_PYPI_SECRETS="${UPSERT_PYPI_SECRETS:-false}"
     POPULATE_FROM_TEMPLATE="${POPULATE_FROM_TEMPLATE:-true}"
@@ -44,7 +43,6 @@ function run-upsert-workflow {
         --repo phitoduck/python-course-cookiecutter-v1 \
         --ref debug-workflow \
         --field repo_name=$REPO_NAME \
-        --field create_repo=$CREATE_REPO \
         --field public=$PUBLIC \
         --field package_import_name=$PACKAGE_IMPORT_NAME \
         --field upsert_pypi_secrets=$UPSERT_PYPI_SECRETS \

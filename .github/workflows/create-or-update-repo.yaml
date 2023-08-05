@@ -12,11 +12,6 @@ on:
         description: "repo_name: create/update: phitoduck/<repo_name>"
         required: true
         type: string
-      create_repo:
-        description: "Create repo (default: update existing repo)"
-        required: true
-        type: boolean
-        default: false
       public:
         description: "Make repo public (default: private)"
         required: false
@@ -46,7 +41,6 @@ env:
 jobs:
   create-repo-if-not-exists:
     name: Create Repo
-    if: ${{ github.event.inputs.create_repo == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Configure git user
