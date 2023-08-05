@@ -1,14 +1,17 @@
 install:
 	bash run.sh install
 
-generate-sample-project:
-	bash run.sh generate-sample-project
+generate-project:
+	bash run.sh generate-project
 
 clean:
 	bash run.sh clean
 
 test:
 	bash run.sh test
+
+run-upsert-workflow:
+	bash run.sh run-upsert-workflow
 
 help:
 	bash run.sh help

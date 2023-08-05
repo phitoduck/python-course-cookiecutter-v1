@@ -1,4 +1,5 @@
 test-reports
+tests/artifacts
 .ruff_cache
 build
 dist

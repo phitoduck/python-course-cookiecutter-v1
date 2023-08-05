@@ -50,21 +50,18 @@ repos:
     rev: "v0.0.261"
     hooks:
       - id: ruff
-        args: [
-          --fix,
-          --exit-non-zero-on-fix,
-          --config=./pyproject.toml,
-        ]
+        args: [--exit-non-zero-on-fix, --config=./pyproject.toml]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.2.0"
     hooks:
       - id: mypy
-        args: [
-          --no-strict-optional,
-          --ignore-missing-imports,
-          --config-file=./pyproject.toml,
-        ]
+        args:
+          [
+            --no-strict-optional,
+            --ignore-missing-imports,
+            --config-file=./pyproject.toml,
+          ]
 
   - repo: https://github.com/psf/black
     rev: 23.1.0
@@ -72,3 +69,38 @@ repos:
       - id: black
         args:
           - --config=./pyproject.toml
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v2.16.3
+    hooks:
+      - id: pylint
+        args:
+          - --rcfile=./pyproject.toml
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args:
+          - --toml-config=./pyproject.toml
+        additional_dependencies:
+          - radon
+          - flake8-docstrings
+          - Flake8-pyproject
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args:
+          - --settings-path=./pyproject.toml
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.0.1
+    hooks:
+      - id: autoflake
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variable
+          - --ignore-init-module-imports
