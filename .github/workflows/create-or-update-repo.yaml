@@ -83,16 +83,16 @@ jobs:
         run: |
           gh secret set TEST_PYPI_TOKEN \
             --body "${{ secrets.TEST_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
           gh secret set PROD_PYPI_TOKEN \
             --body "${{ secrets.PROD_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
           gh secret set EXAMPLE_SECRET \
             --body "${{ secrets.PROD_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
           gh variable set EXAMPLE_VARIABLE \
             --body "${{ secrets.PROD_PYPI_TOKEN }}" \
-            --repos "phitoduck/${{ github.event.inputs.repo_name }}"
+            --repo "phitoduck/${{ github.event.inputs.repo_name }}"
 
   open-pr-to-populate-from-template:
     name: Open PR - Populate from template
