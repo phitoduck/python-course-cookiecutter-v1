@@ -95,6 +95,7 @@ jobs:
       - create-repo-if-not-exists
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set up Python 3.8
         uses: actions/setup-python@v3
         with:
@@ -111,7 +112,7 @@ jobs:
           gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
 
           # delete the contents inside except for the .git folder
-          mv ${{ github.event.inputs.repo_name }}/.git .
+          mv ${{ github.event.inputs.repo_name }}/.git ./.git.bak
           rm -rf ${{ github.event.inputs.repo_name }}
 
           # generate the project
@@ -120,7 +121,7 @@ jobs:
             /bin/bash -x run.sh generate-project
 
           # put the .git folder in the generated project
-          mv .git ${{ github.event.inputs.repo_name }}
+          mv .git.bak ${{ github.event.inputs.repo_name }}
 
           # commit the changes
           cd ${{ github.event.inputs.repo_name }}
