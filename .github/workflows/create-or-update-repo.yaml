@@ -108,6 +108,8 @@ jobs:
           git config --global user.name "Eric Riddoch"
       - name: Run tests 
         run: |
+          set -x
+
           # clone the created repo
           gh repo clone phitoduck/${{ github.event.inputs.repo_name }}
 
