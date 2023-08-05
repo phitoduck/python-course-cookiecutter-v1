@@ -1,3 +1,6 @@
+# TODO: reduce the number of deploys to PyPI. Only publish to prod on manual trigger.
+# But do publish to test PyPI on every push to main.
+
 name: Build, Test, and Publish
 
 on:
@@ -7,6 +10,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      publish_to_main:
+        description: Publish to PyPI if tests successful
+        required: true
+        type: boolean
+        default: false
 
 jobs:
 
@@ -113,11 +122,8 @@ jobs:
         run: |
           git push origin --tags
 
-
-
-
   # https://docs.github.com/en/actions/learn-github-actions/contexts#example-printing-context-information-to-the-log
-  dump_contexts_to_log:
+  dump-contexts-to-log:
     runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
