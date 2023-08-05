@@ -106,7 +106,7 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Run tests 
+      - name: Open PR with a template
         run: |
           set -x
 
@@ -123,7 +123,7 @@ jobs:
             /bin/bash -x run.sh generate-project
 
           # put the .git folder in the generated project
-          mv .git.bak ${{ github.event.inputs.repo_name }}
+          mv .git.bak ${{ github.event.inputs.repo_name }}/.git
 
           # commit the changes
           cd ${{ github.event.inputs.repo_name }}
