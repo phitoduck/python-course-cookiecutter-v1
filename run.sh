@@ -25,9 +25,9 @@ function run-upsert-workflow {
 
     REPO_NAME="${REPO_NAME:-test}"
     PACKAGE_IMPORT_NAME="${PACKAGE_IMPORT_NAME:-test_pkg}"
-    CREATE_REPO="${CREATE_REPO:-true}"
-    PUBLIC="${PUBLIC:-true}"
-    UPSERT_PYPI_SECRETS="${UPSERT_PYPI_SECRETS:-true}"
+    CREATE_REPO="${CREATE_REPO:-false}"
+    PUBLIC="${PUBLIC:-false}"
+    UPSERT_PYPI_SECRETS="${UPSERT_PYPI_SECRETS:-false}"
     POPULATE_FROM_TEMPLATE="${POPULATE_FROM_TEMPLATE:-true}"
 
     # commit the workflow and push to branch
