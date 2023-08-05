@@ -21,22 +21,35 @@ function test {
         "$THIS_DIR/tests/"
 }
 
-# inputs:
-#   REPO_NAME
-#   PUBLIC_OR_PRIVATE literal "public" or "private"
-#   TEST_PYPI_TOKEN, PROD_PYPI_TOKEN
-#   SOURCE_REPO_DIR
-function create-repo {
-    gh repo create "phitoduck/$REPO_NAME" \
-        "--$PUBLIC_OR_PRIVATE" \
-        --source $SOURCE_REPO_DIR \
-        --remote github \
-        --push
-    gh secret set TEST_PYPI_TOKEN --body "$TEST_PYPI_TOKEN" --repos "phitoduck/$REPO_NAME"
-    gh secret set PROD_PYPI_TOKEN --body "$PROD_PYPI_TOKEN" --repos "phitoduck/$REPO_NAME"
-}
+function run-upsert-workflow {
 
-# REPO_NAME="sample-repo-2" PACKAGE_IMPORT_NAME="sample_repo_2" bash run.sh generate-project
+    REPO_NAME="${REPO_NAME:-test}"
+    PACKAGE_IMPORT_NAME="${PACKAGE_IMPORT_NAME:-test_pkg}"
+    CREATE_REPO="${CREATE_REPO:-true}"
+    PUBLIC="${PUBLIC:-true}"
+    UPSERT_PYPI_SECRETS="${UPSERT_PYPI_SECRETS:-true}"
+    POPULATE_FROM_TEMPLATE="${POPULATE_FROM_TEMPLATE:-true}"
+
+    # commit the workflow and push to branch
+    function push-workflow-to-branch {
+        git checkout -b debug-workflow || git checkout debug-workflow
+        git add run.sh .github/workflows/create-or-update-repo.yaml
+        git commit -m "ci: update workflow"
+        git push --set-upstream origin debug-workflow
+    }
+    push-workflow-to-branch || true
+
+    # Run the workflow
+    gh workflow run .github/workflows/create-or-update-repo.yaml \
+        --repo phitoduck/python-course-cookiecutter-v1 \
+        --ref debug-workflow \
+        --field repo_name=$REPO_NAME \
+        --field create_repo=$CREATE_REPO \
+        --field public=$PUBLIC \
+        --field package_import_name=$PACKAGE_IMPORT_NAME \
+        --field upsert_pypi_secrets=$UPSERT_PYPI_SECRETS \
+        --field populate_from_template=$POPULATE_FROM_TEMPLATE
+}
 
 function generate-project {
     set -x
@@ -55,10 +68,6 @@ EOF
         --no-input \
         --config-file "${THIS_DIR}/cookiecutter.yaml" \
         --overwrite-if-exists
-}
-
-function open-pr {
-    
 }
 
 function clean {
