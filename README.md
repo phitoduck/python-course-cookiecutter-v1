@@ -20,3 +20,10 @@ Had to add this in order to pass the build for this repo
     git config --global user.email "test@test.com"
     git config --global user.name "Eric Riddoch"
 ```
+
+- GitHub Token
+  ![](2023-08-04-19-39-18.png)
+  ![](2023-08-04-19-39-39.png)
+  ![](2023-08-04-19-39-53.png)
+  ![](2023-08-04-19-40-51.png)
+

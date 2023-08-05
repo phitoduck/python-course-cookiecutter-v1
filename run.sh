@@ -21,21 +21,44 @@ function test {
         "$THIS_DIR/tests/"
 }
 
-function generate-sample-project {
+# inputs:
+#   REPO_NAME
+#   PUBLIC_OR_PRIVATE literal "public" or "private"
+#   TEST_PYPI_TOKEN, PROD_PYPI_TOKEN
+#   SOURCE_REPO_DIR
+function create-repo {
+    gh repo create "phitoduck/$REPO_NAME" \
+        "--$PUBLIC_OR_PRIVATE" \
+        --source $SOURCE_REPO_DIR \
+        --remote github \
+        --push
+    gh secret set TEST_PYPI_TOKEN --body "$TEST_PYPI_TOKEN" --repos "phitoduck/$REPO_NAME"
+    gh secret set PROD_PYPI_TOKEN --body "$PROD_PYPI_TOKEN" --repos "phitoduck/$REPO_NAME"
+}
+
+# REPO_NAME="sample-repo-2" PACKAGE_IMPORT_NAME="sample_repo_2" bash run.sh generate-project
+
+function generate-project {
     set -x
-    SAMPLE_REPO_NAME="sample-repo"
-    SAMPLE_REPO_DIR="${THIS_DIR}/sample/$SAMPLE_REPO_NAME"
+
+    REPO_NAME="${REPO_NAME:-sample-repo}"
+    PACKAGE_IMPORT_NAME="${PACKAGE_IMPORT_NAME:-sample_import_name}"
 
     cat <<EOF > "${THIS_DIR}/cookiecutter.yaml"
 default_context:
-    repo_name: $SAMPLE_REPO_NAME
+    repo_name: $REPO_NAME
+    package_import_name: $PACKAGE_IMPORT_NAME
 EOF
 
     cookiecutter "$THIS_DIR" \
-        --output-dir "$SAMPLE_REPO_DIR" \
+        --output-dir "$THIS_DIR" \
         --no-input \
         --config-file "${THIS_DIR}/cookiecutter.yaml" \
         --overwrite-if-exists
+}
+
+function open-pr {
+    
 }
 
 function clean {

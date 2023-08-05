@@ -25,6 +25,9 @@ jobs:
         run: |
           git config --global user.email "test@test.com"
           git config --global user.name "Eric Riddoch"
-      - name: Lint, Format, and other static code quality checks
+      - name: Run tests
         run: |
           /bin/bash -x run.sh test
+
+
+

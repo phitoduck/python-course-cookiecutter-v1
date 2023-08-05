@@ -5,3 +5,4 @@ tests/artifacts
 !tests/fixtures/virtualenv.py
 *.coverage
 sample
+cookiecutter.yaml
