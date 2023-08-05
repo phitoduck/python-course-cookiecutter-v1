@@ -9,32 +9,32 @@ on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: "Create/update: phitoduck/<repo_name>"
+        description: "repo_name: create/update: phitoduck/<repo_name>"
         required: true
         type: string
       create_repo:
-        description: "T/F: Create repo"
+        description: "Create repo (default: update existing repo)"
         required: true
         type: boolean
-        default: true
+        default: false
       public:
-        description: "If false, make private if creating repo"
+        description: "Make repo public (default: private)"
         required: false
         type: boolean
         default: false
       package_import_name:
-        description: "e.g. from <package_import_name> import *"
+        description: "package_import_name: e.g. from <package_import_name> import *"
         required: false
         type: string
 
       upsert_pypi_secrets:
-        description: "T/F: Upsert PyPI secrets"
+        description: "Upsert PyPI secrets"
         required: true
         type: boolean
         default: true
 
       populate_from_template:
-        description: "T/F: Populate from template"
+        description: "Populate from template"
         required: true
         type: boolean
         default: true
@@ -67,6 +67,10 @@ jobs:
 
   upsert-pypi-secrets:
     name: Upsert PyPI Secrets
+    # if+needs: always run if upsert_pypi_secrets is true, but if
+    # create-repo is run, run after create-repo
+    if: always() && ${{ github.event.inputs.upsert_pypi_secrets == 'true' }}
+    needs: create-repo
     runs-on: ubuntu-latest
     steps:
       - name: Configure git user
@@ -82,6 +86,9 @@ jobs:
 
   open-pr-to-populate-from-template:
     name: Open PR - Populate from template
+    if: always() && ${{ github.event.inputs.populate_from_template == 'true' }}
+    needs:
+      - create-repo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
